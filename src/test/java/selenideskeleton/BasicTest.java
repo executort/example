@@ -1,5 +1,6 @@
 package selenideskeleton;
 
+import org.bouncycastle.util.encoders.Base64;
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
@@ -24,7 +25,7 @@ public class BasicTest {
 	@Test()
 	public void exampleTest() {
 		String login = "executort@bk.ru";
-		String pwd = "111Letters";
+		String pwd = "MTExTGV0dGVycw";
 		String subject = "Узнайте о супервозможностях Почты Mail.Ru";
 		String keyword = "супервозможностях";
 		String fromName = "Команда Mail.ru";
@@ -33,12 +34,10 @@ public class BasicTest {
 		
 		MailBasePage basePage = open("https://mail.ru", MailBasePage.class);
 		basePage.waitPageLoaded();
-		MailboxPage mailbox = basePage.login(login, pwd);
+		MailboxPage mailbox = basePage.login(login, new String(Base64.decode((pwd + "==").getBytes())));
 		mailbox.waitPageLoadedForUser(login);
 		MailboxItem target = null;
 		for (MailboxItem curItem : mailbox.search(keyword)) {
-			System.out.println(curItem.getSelf().innerHtml());
-			System.out.println(curItem.subject.toString());
 			if (curItem.subject.text().startsWith(subject)) {
 				target = curItem;
 				break;
